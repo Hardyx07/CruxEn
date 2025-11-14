@@ -6,48 +6,42 @@ import { Card } from "@/components/ui/card"
 import FrameworkSelector from "./framework-selector"
 import PromptInput from "./prompt-input"
 import MagicTransformEffect from "./magic-transform-effect"
-
-type Framework = "coding" | "research" | "study" | "business"
+import { optimizePrompt } from "@/lib/api-client"
 
 export default function PromptEnhancer() {
   const [rawPrompt, setRawPrompt] = useState("")
   const [enhancedPrompt, setEnhancedPrompt] = useState("")
-  const [framework, setFramework] = useState<Framework>("coding")
+  const [selectedUseCase, setSelectedUseCase] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [showTransform, setShowTransform] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const promptBoxRef = useRef<HTMLDivElement>(null)
 
   const handleEnhance = async () => {
-    if (!rawPrompt.trim()) return
+    if (!rawPrompt.trim() || !selectedUseCase) return
 
     setIsLoading(true)
     setShowTransform(true)
+    setError(null)
 
     try {
-      const response = await fetch("/api/enhance-prompt", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt: rawPrompt,
-          framework,
-        }),
-      })
+      const response = await optimizePrompt(rawPrompt, selectedUseCase)
 
-      if (!response.ok) {
-        throw new Error("Failed to enhance prompt")
+      if (response.error) {
+        throw new Error(response.error)
       }
 
-      const data = await response.json()
-
       setTimeout(() => {
-        setEnhancedPrompt(data.enhanced)
+        setEnhancedPrompt(response.optimized_prompt)
         setRawPrompt("")
         setShowTransform(false)
+        setIsLoading(false)
       }, 1600)
-    } catch (error) {
-      console.error("Error enhancing prompt:", error)
+    } catch (err) {
+      console.error("Error enhancing prompt:", err)
+      setError(
+        err instanceof Error ? err.message : "Failed to enhance prompt"
+      )
       setShowTransform(false)
       setIsLoading(false)
     }
@@ -68,7 +62,10 @@ export default function PromptEnhancer() {
 
       <div className="w-full max-w-2xl space-y-8">
         {/* Framework Selector */}
-        <FrameworkSelector framework={framework} onFrameworkChange={setFramework} />
+        <FrameworkSelector
+          selectedUseCase={selectedUseCase}
+          onUseCaseChange={setSelectedUseCase}
+        />
 
         {/* Main Prompt Box */}
         <div ref={promptBoxRef} className="relative">
@@ -79,7 +76,7 @@ export default function PromptEnhancer() {
               {enhancedPrompt ? (
                 <div className="space-y-6 fade-in">
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-3 h-3 rounded-full bg-gradient-to-r from-accent to-accent/60" />
+                    <div className="w-3 h-3 rounded-full bg-linear-to-r from-accent to-accent/60" />
                     <span className="text-sm font-semibold text-accent uppercase tracking-wide">Enhanced Result</span>
                   </div>
                   <p className="text-foreground text-lg leading-relaxed font-light">{enhancedPrompt}</p>
@@ -102,7 +99,7 @@ export default function PromptEnhancer() {
                   />
                   <Button
                     onClick={handleEnhance}
-                    disabled={!rawPrompt.trim() || isLoading}
+                    disabled={!rawPrompt.trim() || !selectedUseCase || isLoading}
                     className="w-full mt-8 bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed text-accent-foreground font-semibold py-3 text-base rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
                     size="lg"
                   >
@@ -115,6 +112,11 @@ export default function PromptEnhancer() {
                       "✨ Enhance with Magic"
                     )}
                   </Button>
+                  {error && (
+                    <div className="mt-4 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-sm text-destructive">
+                      {error}
+                    </div>
+                  )}
                 </>
               )}
             </div>
