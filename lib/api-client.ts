@@ -19,11 +19,11 @@ export interface ChatResponse {
 }
 
 /**
- * Fetch all available use cases from backend
+ * Fetch all available use cases from backend (v2.0 - uses frameworks endpoint)
  */
 export async function fetchUseCases(): Promise<UseCase[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/use-cases`, {
+    const response = await fetch(`${API_BASE_URL}/frameworks`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -31,10 +31,19 @@ export async function fetchUseCases(): Promise<UseCase[]> {
     })
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch use cases: ${response.status}`)
+      throw new Error(`Failed to fetch frameworks: ${response.status}`)
     }
 
-    return await response.json()
+    const frameworks = await response.json()
+    
+    // Convert frameworks to legacy use case format for compatibility
+    return frameworks.map((fw: any) => ({
+      category: fw.name.split(' ')[0].toLowerCase(),
+      subcategory: fw.id,
+      description: fw.description,
+      frameworks: [fw.id],
+      role: fw.role_personas?.[0] || null,
+    }))
   } catch (error) {
     console.error("Error fetching use cases:", error)
     return []
@@ -42,7 +51,7 @@ export async function fetchUseCases(): Promise<UseCase[]> {
 }
 
 /**
- * Send prompt to backend for optimization via Groq
+ * Send prompt to backend for optimization via Groq (v2.0)
  */
 export async function optimizePrompt(
   prompt: string,
@@ -56,7 +65,8 @@ export async function optimizePrompt(
       },
       body: JSON.stringify({
         prompt,
-        use_case: useCase,
+        framework: useCase, // v2.0 uses 'framework' parameter
+        include_meta: false,
       }),
     })
 

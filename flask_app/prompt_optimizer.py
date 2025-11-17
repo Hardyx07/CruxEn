@@ -1,11 +1,11 @@
-"""Context-Aware Prompt Optimization System
-A multi-layered framework for intelligent prompt generation and enhancement.
+"""Context-Aware Prompt Optimization System v2.0
+A streamlined 7-framework system for intelligent prompt generation and enhancement.
 """
 
 import re
 import os
 import json
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Set
 from dataclasses import dataclass
 from enum import Enum
 
@@ -22,27 +22,30 @@ except ImportError:  # pragma: no cover - optional dependency warning
 
 
 class Framework(Enum):
-    """Prompt design frameworks."""
+    """Streamlined 7 core prompt frameworks."""
 
-    CHAIN_OF_THOUGHT = "chain_of_thought"
-    FEW_SHOT = "few_shot"
-    MULTI_SHOT = "multi_shot"
-    FUNCTION_CALLING = "function_calling"
-    ROLE_BASED = "role_based"
-    INSTRUCTION_BASED = "instruction_based"
-    BRAINSTORM = "brainstorm"
+    REASONING_PROBLEM_SOLVING = "reasoning_problem_solving"
+    RESEARCH_EXPLORATION = "research_exploration"
+    INSTRUCTION_LEARNING = "instruction_learning"
+    CODING_TECHNICAL = "coding_technical"
+    CREATIVE_IDEATION = "creative_ideation"
+    WRITING_COMMUNICATION = "writing_communication"
+    OPTIMIZATION_REVIEW = "optimization_review"
 
 
 @dataclass
-class UseCase:
-    """Use case definition with metadata."""
+class FrameworkConfig:
+    """Framework configuration with patterns and triggers."""
 
-    category: str
-    subcategory: str
+    framework: Framework
+    name: str
     description: str
-    frameworks: List[Framework]
-    role_template: Optional[str] = None
-    keywords: Optional[List[str]] = None
+    ideal_for: List[str]
+    trigger_keywords: Set[str]
+    trigger_patterns: List[str]
+    role_personas: List[str]
+    structure_template: str
+    example_inputs: List[str]
 
 
 @dataclass
@@ -50,423 +53,628 @@ class OptimizedPrompt:
     """Result of prompt optimization."""
 
     original_input: str
-    detected_use_case: UseCase
-    applied_frameworks: List[Framework]
+    detected_framework: Framework
+    framework_name: str
     optimized_prompt: str
     confidence_score: float
     reasoning: str
+    suggested_role: str
+    quality_score: float
 
 
-# ==================== USE CASE TAXONOMY ====================
+# ==================== FRAMEWORK REGISTRY ====================
 
 
-class UseCaseTaxonomy:
-    """Comprehensive use case mapping system."""
+class FrameworkRegistry:
+    """Central registry for all 7 core frameworks with comprehensive pattern matching."""
 
     def __init__(self) -> None:
-        self.use_cases = self._build_taxonomy()
+        self.frameworks = self._build_frameworks()
 
-    def _build_taxonomy(self) -> Dict[str, List[UseCase]]:
-        """Build the complete use case taxonomy."""
+    def _build_frameworks(self) -> Dict[Framework, FrameworkConfig]:
+        """Build the complete framework registry."""
 
         return {
-            # Category 1: Content Creation
-            "content_creation": [
-                UseCase(
-                    category="content_creation",
-                    subcategory="blog_article",
-                    description="Long-form SEO-friendly text",
-                    frameworks=[Framework.FEW_SHOT, Framework.INSTRUCTION_BASED],
-                    role_template="Professional Content Writer",
-                    keywords=["blog", "article", "write", "content", "seo", "post"],
-                ),
-                UseCase(
-                    category="content_creation",
-                    subcategory="social_media",
-                    description="Social media content generation",
-                    frameworks=[Framework.FEW_SHOT, Framework.ROLE_BASED],
-                    role_template="Social Media Marketing Expert",
-                    keywords=["social", "tweet", "instagram", "facebook", "post", "caption"],
-                ),
-                UseCase(
-                    category="content_creation",
-                    subcategory="video_script",
-                    description="Video script structure and tone",
-                    frameworks=[Framework.INSTRUCTION_BASED],
-                    role_template="Video Script Writer",
-                    keywords=["video", "script", "youtube", "screenplay"],
-                ),
-                UseCase(
-                    category="content_creation",
-                    subcategory="ad_copy",
-                    description="Short-form persuasive writing",
-                    frameworks=[Framework.ROLE_BASED],
-                    role_template="Ad Copywriter",
-                    keywords=["ad", "advertisement", "copy", "product description", "marketing"],
-                ),
-            ],
-            # Category 2: Business and Marketing
-            "business_marketing": [
-                UseCase(
-                    category="business_marketing",
-                    subcategory="business_plan",
-                    description="Formal business plan structure",
-                    frameworks=[Framework.CHAIN_OF_THOUGHT, Framework.ROLE_BASED],
-                    role_template="Business Strategy Consultant",
-                    keywords=["business plan", "strategy", "startup", "venture"],
-                ),
-                UseCase(
-                    category="business_marketing",
-                    subcategory="sales_pitch",
-                    description="Persuasive sales content",
-                    frameworks=[Framework.ROLE_BASED],
-                    role_template="Investor Relations Expert",
-                    keywords=["pitch", "investor", "sales", "proposal", "presentation"],
-                ),
-                UseCase(
-                    category="business_marketing",
-                    subcategory="customer_persona",
-                    description="Customer persona creation",
-                    frameworks=[Framework.MULTI_SHOT, Framework.FUNCTION_CALLING],
-                    role_template="Marketing Analyst",
-                    keywords=["persona", "customer", "audience", "target market"],
-                ),
-            ],
-            # Category 3: Education and Training
-            "education_training": [
-                UseCase(
-                    category="education_training",
-                    subcategory="explain_complex",
-                    description="Simplify complex concepts",
-                    frameworks=[Framework.CHAIN_OF_THOUGHT],
-                    role_template="Expert Educator",
-                    keywords=["explain", "teach", "understand", "learn", "concept"],
-                ),
-                UseCase(
-                    category="education_training",
-                    subcategory="quiz_generation",
-                    description="Structured quiz output",
-                    frameworks=[Framework.FUNCTION_CALLING],
-                    role_template="Assessment Designer",
-                    keywords=["quiz", "test", "questions", "assessment", "exam"],
-                ),
-                UseCase(
-                    category="education_training",
-                    subcategory="lesson_plan",
-                    description="Organized lesson templates",
-                    frameworks=[Framework.ROLE_BASED],
-                    role_template="Curriculum Designer",
-                    keywords=["lesson", "curriculum", "teaching plan", "course"],
-                ),
-            ],
-            # Category 4: Technical/Programming
-            "technical_programming": [
-                UseCase(
-                    category="technical_programming",
-                    subcategory="code_generation",
-                    description="Generate or debug code",
-                    frameworks=[Framework.FUNCTION_CALLING, Framework.FEW_SHOT],
-                    role_template="Senior Software Engineer",
-                    keywords=["code", "debug", "program", "function", "algorithm", "implement"],
-                ),
-                UseCase(
-                    category="technical_programming",
-                    subcategory="code_explanation",
-                    description="Step-by-step code reasoning",
-                    frameworks=[Framework.CHAIN_OF_THOUGHT, Framework.ROLE_BASED],
-                    role_template="Senior Developer",
-                    keywords=["explain code", "how does", "code review", "analyze"],
-                ),
-                UseCase(
-                    category="technical_programming",
-                    subcategory="api_documentation",
-                    description="API explanation and docs",
-                    frameworks=[Framework.FEW_SHOT, Framework.ROLE_BASED],
-                    role_template="Technical Writer",
-                    keywords=["api", "documentation", "endpoint", "integration"],
-                ),
-            ],
-            # Category 5: Data Analysis
-            "data_analysis": [
-                UseCase(
-                    category="data_analysis",
-                    subcategory="data_summary",
-                    description="Analyze and summarize data",
-                    frameworks=[Framework.FUNCTION_CALLING, Framework.CHAIN_OF_THOUGHT],
-                    role_template="Data Analyst",
-                    keywords=["analyze", "data", "statistics", "insights", "trends"],
-                ),
-                UseCase(
-                    category="data_analysis",
-                    subcategory="visualization",
-                    description="Data visualization insights",
-                    frameworks=[Framework.CHAIN_OF_THOUGHT, Framework.ROLE_BASED],
-                    role_template="Data Visualization Expert",
-                    keywords=["visualize", "chart", "graph", "plot", "dashboard"],
-                ),
-            ],
-            # Category 6: Personal Productivity
-            "personal_productivity": [
-                UseCase(
-                    category="personal_productivity",
-                    subcategory="time_management",
-                    description="Schedule and time optimization",
-                    frameworks=[Framework.FUNCTION_CALLING],
-                    role_template="Productivity Coach",
-                    keywords=["schedule", "time", "calendar", "organize", "plan day"],
-                ),
-                UseCase(
-                    category="personal_productivity",
-                    subcategory="goal_planning",
-                    description="Goal setting and planning",
-                    frameworks=[Framework.CHAIN_OF_THOUGHT],
-                    role_template="Life Coach",
-                    keywords=["goal", "plan", "achieve", "objective", "milestone"],
-                ),
-            ],
-            # Category 7: Communication & Summarization
-            "communication_summarization": [
-                UseCase(
-                    category="communication_summarization",
-                    subcategory="email_draft",
-                    description="Email composition",
-                    frameworks=[Framework.FEW_SHOT, Framework.ROLE_BASED],
-                    role_template="Professional Communications Specialist",
-                    keywords=["email", "message", "write to", "draft", "letter"],
-                ),
-                UseCase(
-                    category="communication_summarization",
-                    subcategory="meeting_summary",
-                    description="Meeting notes summarization",
-                    frameworks=[Framework.FUNCTION_CALLING],
-                    role_template="Executive Assistant",
-                    keywords=["summarize", "meeting", "notes", "key points", "minutes"],
-                ),
-            ],
-            # Category 8: Creative and Design
-            "creative_design": [
-                UseCase(
-                    category="creative_design",
-                    subcategory="design_ideas",
-                    description="Creative design concepts",
-                    frameworks=[Framework.BRAINSTORM, Framework.FEW_SHOT],
-                    role_template="Creative Director",
-                    keywords=["design", "logo", "brand", "creative", "concept"],
-                ),
-                UseCase(
-                    category="creative_design",
-                    subcategory="creative_writing",
-                    description="Poetry, fiction, stories",
-                    frameworks=[Framework.INSTRUCTION_BASED, Framework.FEW_SHOT],
-                    role_template="Creative Writer",
-                    keywords=["story", "poem", "fiction", "lyrics", "creative writing"],
-                ),
-            ],
-            # Category 9: Research and Knowledge
-            "research_knowledge": [
-                UseCase(
-                    category="research_knowledge",
-                    subcategory="academic_summary",
-                    description="Academic content synthesis",
-                    frameworks=[Framework.CHAIN_OF_THOUGHT],
-                    role_template="Research Analyst",
-                    keywords=["research", "academic", "summarize paper", "literature review"],
-                ),
-                UseCase(
-                    category="research_knowledge",
-                    subcategory="multi_source",
-                    description="Multi-source synthesis",
-                    frameworks=[Framework.MULTI_SHOT, Framework.CHAIN_OF_THOUGHT],
-                    role_template="Knowledge Synthesis Expert",
-                    keywords=["compare", "synthesize", "multiple sources", "analysis"],
-                ),
-            ],
-            # Category 10: Personal Advice
-            "personal_advice": [
-                UseCase(
-                    category="personal_advice",
-                    subcategory="motivational",
-                    description="Motivational support",
-                    frameworks=[Framework.ROLE_BASED],
-                    role_template="Life Coach",
-                    keywords=["motivate", "inspire", "advice", "help me", "support"],
-                ),
-                UseCase(
-                    category="personal_advice",
-                    subcategory="journaling",
-                    description="Journaling prompts",
-                    frameworks=[Framework.INSTRUCTION_BASED],
-                    role_template="Mindfulness Coach",
-                    keywords=["journal", "reflect", "thoughts", "feelings"],
-                ),
-            ],
+            # Framework 1: Reasoning & Problem-Solving
+            Framework.REASONING_PROBLEM_SOLVING: FrameworkConfig(
+                framework=Framework.REASONING_PROBLEM_SOLVING,
+                name="Reasoning & Problem-Solving",
+                description="Logical step-by-step thinking, complex problem solving, decision analysis",
+                ideal_for=[
+                    "Complex multi-step problems",
+                    "Logical reasoning tasks",
+                    "Decision-making scenarios",
+                    "Strategic analysis",
+                    "Cause-effect analysis",
+                    "Comparative evaluation",
+                ],
+                trigger_keywords={
+                    "solve", "problem", "decide", "choose", "analyze", "reason",
+                    "why", "how", "logic", "think", "evaluate", "compare",
+                    "should i", "what if", "scenario", "decision", "option",
+                    "best way", "figure out", "work through", "break down",
+                    "approach", "strategy", "tradeoff", "pros and cons",
+                },
+                trigger_patterns=[
+                    r"how (do|can|should) i",
+                    r"what('s| is) the best",
+                    r"help me (decide|choose|figure)",
+                    r"which (is|would be) better",
+                    r"(solve|resolve|fix) (this|the)",
+                    r"think through",
+                    r"step by step",
+                ],
+                role_personas=[
+                    "Strategic Consultant",
+                    "Problem-Solving Expert",
+                    "Decision Analyst",
+                    "Critical Thinking Coach",
+                ],
+                structure_template="chain_of_thought",
+                example_inputs=[
+                    "Should I quit my job to start a business?",
+                    "How do I solve this complex math problem?",
+                    "Help me decide between option A and B",
+                ],
+            ),
+            # Framework 2: Research & Exploration
+            Framework.RESEARCH_EXPLORATION: FrameworkConfig(
+                framework=Framework.RESEARCH_EXPLORATION,
+                name="Research & Exploration",
+                description="Deep research, multi-source synthesis, investigations, insight extraction",
+                ideal_for=[
+                    "Research tasks",
+                    "Topic deep-dives",
+                    "Literature reviews",
+                    "Market research",
+                    "Trend analysis",
+                    "Information synthesis",
+                ],
+                trigger_keywords={
+                    "research", "explore", "investigate", "find out", "learn about",
+                    "tell me about", "what is", "explain", "overview", "summary",
+                    "background", "history", "trends", "insights", "data",
+                    "study", "examine", "discover", "uncover", "synthesize",
+                    "compare sources", "literature", "findings",
+                },
+                trigger_patterns=[
+                    r"tell me (about|everything)",
+                    r"what (is|are|do you know)",
+                    r"research on",
+                    r"find (out|information)",
+                    r"give me (an overview|insights)",
+                    r"latest (trends|developments)",
+                ],
+                role_personas=[
+                    "Research Analyst",
+                    "Subject Matter Expert",
+                    "Knowledge Synthesizer",
+                    "Academic Researcher",
+                ],
+                structure_template="multi_source",
+                example_inputs=[
+                    "Research the impact of AI on healthcare",
+                    "What are the latest trends in renewable energy?",
+                    "Give me an overview of quantum computing",
+                ],
+            ),
+            # Framework 3: Instruction, Learning & Explanation
+            Framework.INSTRUCTION_LEARNING: FrameworkConfig(
+                framework=Framework.INSTRUCTION_LEARNING,
+                name="Instruction, Learning & Explanation",
+                description="How-to guides, tutorials, teaching complex concepts, step-by-step instructions",
+                ideal_for=[
+                    "Teaching tasks",
+                    "Step-by-step guides",
+                    "Concept explanations",
+                    "Tutorials",
+                    "Educational content",
+                    "Learning materials",
+                ],
+                trigger_keywords={
+                    "how to", "teach", "explain", "show me", "guide", "tutorial",
+                    "instruct", "demonstrate", "walk through", "learn", "understand",
+                    "eli5", "simple terms", "beginner", "introduce", "basics",
+                    "fundamentals", "lesson", "course", "training", "educate",
+                },
+                trigger_patterns=[
+                    r"how (to|do i)",
+                    r"teach me",
+                    r"explain (like|in simple)",
+                    r"show me how",
+                    r"walk me through",
+                    r"step.by.step",
+                    r"guide (to|for)",
+                ],
+                role_personas=[
+                    "Expert Educator",
+                    "Patient Teacher",
+                    "Tutorial Creator",
+                    "Learning Facilitator",
+                ],
+                structure_template="instructional",
+                example_inputs=[
+                    "Teach me how to code in Python",
+                    "Explain quantum physics in simple terms",
+                    "Show me how to bake a cake step by step",
+                ],
+            ),
+            # Framework 4: Coding & Technical
+            Framework.CODING_TECHNICAL: FrameworkConfig(
+                framework=Framework.CODING_TECHNICAL,
+                name="Coding & Technical",
+                description="Code generation, debugging, technical architecture, algorithm design",
+                ideal_for=[
+                    "Code writing",
+                    "Debugging",
+                    "Algorithm design",
+                    "Technical documentation",
+                    "API development",
+                    "System architecture",
+                ],
+                trigger_keywords={
+                    "code", "program", "function", "class", "algorithm", "debug",
+                    "fix", "error", "bug", "implement", "build", "create",
+                    "develop", "script", "api", "database", "query", "test",
+                    "refactor", "optimize", "compile", "syntax", "runtime",
+                    "method", "variable", "loop", "array", "object",
+                },
+                trigger_patterns=[
+                    r"write (a|an|the|some) (code|function|class|program)",
+                    r"(create|build|implement|generate) (a|an)",
+                    r"debug (this|the|my)",
+                    r"fix (this|the|my) (code|error|bug)",
+                    r"(python|javascript|java|c\+\+|sql)",
+                ],
+                role_personas=[
+                    "Senior Software Engineer",
+                    "Full-Stack Developer",
+                    "System Architect",
+                    "DevOps Expert",
+                ],
+                structure_template="code_focused",
+                example_inputs=[
+                    "Write a Python function to sort an array",
+                    "Debug this JavaScript code",
+                    "Create a REST API in Node.js",
+                ],
+            ),
+            # Framework 5: Creative & Ideation
+            Framework.CREATIVE_IDEATION: FrameworkConfig(
+                framework=Framework.CREATIVE_IDEATION,
+                name="Creative & Ideation",
+                description="Brainstorming, idea generation, creative writing, concept creation",
+                ideal_for=[
+                    "Brainstorming sessions",
+                    "Creative writing",
+                    "Idea generation",
+                    "Concept development",
+                    "Innovation tasks",
+                    "Artistic projects",
+                ],
+                trigger_keywords={
+                    "brainstorm", "ideas", "creative", "imagine", "invent",
+                    "create", "design", "story", "poem", "lyrics", "novel",
+                    "fiction", "concept", "innovative", "unique", "original",
+                    "artistic", "inspiration", "theme", "plot", "character",
+                    "world building", "narrative",
+                },
+                trigger_patterns=[
+                    r"(brainstorm|generate) (ideas|concepts)",
+                    r"write a (story|poem|song|script)",
+                    r"create (something|a concept)",
+                    r"come up with",
+                    r"imagine (a|an)",
+                    r"creative (ideas|solutions)",
+                ],
+                role_personas=[
+                    "Creative Director",
+                    "Innovation Consultant",
+                    "Creative Writer",
+                    "Brainstorming Facilitator",
+                ],
+                structure_template="divergent",
+                example_inputs=[
+                    "Brainstorm ideas for a sci-fi novel",
+                    "Write a poem about the ocean",
+                    "Generate creative marketing campaign ideas",
+                ],
+            ),
+            # Framework 6: Writing & Communication
+            Framework.WRITING_COMMUNICATION: FrameworkConfig(
+                framework=Framework.WRITING_COMMUNICATION,
+                name="Writing & Communication",
+                description="Professional writing, emails, blogs, scripts, messaging, content creation",
+                ideal_for=[
+                    "Email writing",
+                    "Blog posts",
+                    "Professional documents",
+                    "Social media content",
+                    "Presentations",
+                    "Communication tasks",
+                ],
+                trigger_keywords={
+                    "write", "draft", "compose", "email", "letter", "message",
+                    "blog", "article", "post", "content", "copy", "text",
+                    "communicate", "respond", "reply", "announcement",
+                    "newsletter", "report", "document", "memo", "press release",
+                    "social media", "tweet", "caption", "description",
+                },
+                trigger_patterns=[
+                    r"write (an|a) (email|letter|blog|article)",
+                    r"draft (a|an)",
+                    r"compose (a|an)",
+                    r"help me write",
+                    r"create (content|copy)",
+                ],
+                role_personas=[
+                    "Professional Writer",
+                    "Communications Specialist",
+                    "Content Creator",
+                    "Copywriter",
+                ],
+                structure_template="narrative",
+                example_inputs=[
+                    "Write a professional email to my boss",
+                    "Draft a blog post about productivity tips",
+                    "Create an engaging social media caption",
+                ],
+            ),
+            # Framework 7: Optimization, Review & Improvement
+            Framework.OPTIMIZATION_REVIEW: FrameworkConfig(
+                framework=Framework.OPTIMIZATION_REVIEW,
+                name="Optimization, Review & Improvement",
+                description="Improving text or code, refining ideas, quality evaluation, feedback",
+                ideal_for=[
+                    "Code review",
+                    "Text improvement",
+                    "Quality assessment",
+                    "Performance optimization",
+                    "Feedback generation",
+                    "Refinement tasks",
+                ],
+                trigger_keywords={
+                    "improve", "optimize", "enhance", "refine", "review",
+                    "feedback", "critique", "evaluate", "assess", "better",
+                    "revise", "polish", "upgrade", "streamline", "fix",
+                    "make better", "suggestions", "recommendations",
+                    "quality", "efficiency", "performance",
+                },
+                trigger_patterns=[
+                    r"(improve|optimize|enhance|refine) (this|my|the)",
+                    r"make (this|it) better",
+                    r"review (this|my|the)",
+                    r"give (me |)(feedback|suggestions)",
+                    r"how can i improve",
+                    r"what('s| is) wrong with",
+                ],
+                role_personas=[
+                    "Quality Assurance Expert",
+                    "Optimization Specialist",
+                    "Performance Coach",
+                    "Editorial Reviewer",
+                ],
+                structure_template="evaluative",
+                example_inputs=[
+                    "Review and improve this code",
+                    "Give me feedback on this essay",
+                    "Optimize this SQL query for performance",
+                ],
+            ),
         }
 
-    def get_all_use_cases(self) -> List[UseCase]:
-        """Get flattened list of all use cases."""
+    def get_all_frameworks(self) -> List[FrameworkConfig]:
+        """Get list of all framework configurations."""
+        return list(self.frameworks.values())
 
-        all_cases: List[UseCase] = []
-        for category_cases in self.use_cases.values():
-            all_cases.extend(category_cases)
-        return all_cases
+    def get_framework(self, framework: Framework) -> FrameworkConfig:
+        """Get specific framework configuration."""
+        return self.frameworks[framework]
+
+# ==================== INTELLIGENT FRAMEWORK DETECTOR ====================
+
+
+class FrameworkDetector:
+    """Intelligently detect the best framework for a given prompt."""
+
+    def __init__(self) -> None:
+        self.registry = FrameworkRegistry()
+
+    def detect(self, user_input: str) -> Tuple[Framework, float, str]:
+        """
+        Detect the most appropriate framework for the user input.
+        Returns: (framework, confidence_score, reasoning)
+        """
+        
+        input_lower = user_input.lower()
+        scores: Dict[Framework, float] = {}
+        
+        # Score each framework based on keyword and pattern matching
+        for framework_config in self.registry.get_all_frameworks():
+            score = 0.0
+            matched_keywords: List[str] = []
+            matched_patterns: List[str] = []
+            
+            # Keyword matching (40% weight)
+            for keyword in framework_config.trigger_keywords:
+                if keyword in input_lower:
+                    score += 0.5
+                    matched_keywords.append(keyword)
+            
+            # Pattern matching (60% weight)
+            for pattern in framework_config.trigger_patterns:
+                if re.search(pattern, input_lower):
+                    score += 1.0
+                    matched_patterns.append(pattern)
+            
+            # Normalize score
+            max_possible = len(framework_config.trigger_keywords) * 0.5 + len(framework_config.trigger_patterns) * 1.0
+            if max_possible > 0:
+                scores[framework_config.framework] = min(score / max_possible * 100, 100)
+            else:
+                scores[framework_config.framework] = 0.0
+        
+        # Get best match
+        if not scores or max(scores.values()) == 0:
+            # Default to reasoning framework
+            best_framework = Framework.REASONING_PROBLEM_SOLVING
+            confidence = 0.5
+        else:
+            best_framework = max(scores, key=scores.get)  # type: ignore
+            confidence = min(scores[best_framework] / 100, 1.0)
+        
+        # Generate reasoning
+        framework_config = self.registry.get_framework(best_framework)
+        reasoning = f"Selected {framework_config.name} based on detected patterns in your request."
+        
+        return best_framework, confidence, reasoning
+
 
 # ==================== FRAMEWORK APPLIERS ====================
 
 
 class FrameworkApplier:
-    """Apply specific prompt framework patterns."""
+    """Apply framework-specific prompt optimization patterns."""
 
-    @staticmethod
-    def apply_chain_of_thought(prompt: str, use_case: UseCase) -> str:
-        """Apply Chain-of-Thought reasoning pattern."""
+    def __init__(self) -> None:
+        self.registry = FrameworkRegistry()
 
-        return f"""Let's approach this step-by-step:
+    def apply(self, prompt: str, framework: Framework) -> Tuple[str, str]:
+        """
+        Apply the framework to the prompt.
+        Returns: (optimized_prompt, suggested_role)
+        """
+        
+        config = self.registry.get_framework(framework)
+        
+        # Select appropriate role persona
+        role = config.role_personas[0] if config.role_personas else "Expert Assistant"
+        
+        # Apply framework-specific template
+        if config.structure_template == "chain_of_thought":
+            optimized = self._apply_chain_of_thought(prompt, config, role)
+        elif config.structure_template == "multi_source":
+            optimized = self._apply_multi_source(prompt, config, role)
+        elif config.structure_template == "instructional":
+            optimized = self._apply_instructional(prompt, config, role)
+        elif config.structure_template == "code_focused":
+            optimized = self._apply_code_focused(prompt, config, role)
+        elif config.structure_template == "divergent":
+            optimized = self._apply_divergent(prompt, config, role)
+        elif config.structure_template == "narrative":
+            optimized = self._apply_narrative(prompt, config, role)
+        elif config.structure_template == "evaluative":
+            optimized = self._apply_evaluative(prompt, config, role)
+        else:
+            optimized = self._apply_default(prompt, config, role)
+        
+        return optimized, role
 
-Task: {prompt}
+    def _apply_chain_of_thought(self, prompt: str, config: FrameworkConfig, role: str) -> str:
+        """Apply chain-of-thought reasoning framework."""
+        return f"""You are a {role}. Let's approach this problem systematically.
 
-Please think through this systematically:
-1. First, break down the key components
-2. Then, analyze each part carefully
-3. Finally, synthesize a comprehensive solution
+**Task:** {prompt}
 
-Show your reasoning at each step."""
+**Approach:**
+1. **Analyze** - Break down the problem into key components
+2. **Reason** - Think through each part logically, considering all factors
+3. **Evaluate** - Weigh different options, pros/cons, and implications
+4. **Synthesize** - Combine insights into a comprehensive solution
+5. **Validate** - Check reasoning and ensure completeness
 
-    @staticmethod
-    def apply_few_shot(prompt: str, use_case: UseCase) -> str:
-        """Apply Few-shot learning pattern."""
+Please show your step-by-step reasoning throughout your response."""
 
-        examples = FrameworkApplier._get_examples_for_use_case(use_case)
+    def _apply_multi_source(self, prompt: str, config: FrameworkConfig, role: str) -> str:
+        """Apply research and exploration framework."""
+        return f"""You are a {role}. Conduct a thorough exploration of this topic.
 
-        return f"""Here are some examples of similar tasks:
+**Research Request:** {prompt}
 
-{examples}
+**Research Framework:**
+1. **Overview** - Provide foundational understanding and context
+2. **Key Findings** - Present main insights, facts, and discoveries
+3. **Analysis** - Examine trends, patterns, and relationships
+4. **Multiple Perspectives** - Consider different viewpoints and sources
+5. **Synthesis** - Draw connections and derive meaningful conclusions
+6. **Implications** - Discuss significance and applications
 
-Now, please complete this task following the same pattern:
-{prompt}"""
+Provide comprehensive, well-researched information with depth and nuance."""
 
-    @staticmethod
-    def apply_role_based(prompt: str, use_case: UseCase) -> str:
-        """Apply Role-based prompting."""
+    def _apply_instructional(self, prompt: str, config: FrameworkConfig, role: str) -> str:
+        """Apply instruction and learning framework."""
+        return f"""You are a {role}. Provide clear, accessible instruction.
 
-        role = use_case.role_template or "Expert"
+**Learning Goal:** {prompt}
 
-        return f"""You are a {role} with deep expertise in this domain.
+**Teaching Approach:**
+1. **Introduction** - Set context and explain why this matters
+2. **Prerequisites** - Identify what learners need to know first
+3. **Step-by-Step Breakdown** - Present information in logical, digestible steps
+4. **Examples** - Provide concrete, relatable examples
+5. **Practice Tips** - Suggest how to apply and reinforce learning
+6. **Common Pitfalls** - Warn about typical mistakes to avoid
 
-Task: {prompt}
+Ensure clarity, use analogies where helpful, and adapt to different learning levels."""
 
-Please respond as this expert would, leveraging your specialized knowledge and professional approach."""
+    def _apply_code_focused(self, prompt: str, config: FrameworkConfig, role: str) -> str:
+        """Apply coding and technical framework."""
+        return f"""You are a {role}. Provide technical solution with best practices.
 
-    @staticmethod
-    def apply_function_calling(prompt: str, use_case: UseCase) -> str:
-        """Apply Function-calling / Structured output pattern."""
+**Technical Request:** {prompt}
 
-        return f"""{prompt}
+**Development Approach:**
+1. **Requirements** - Clarify specifications and constraints
+2. **Design** - Plan architecture and approach
+3. **Implementation** - Provide clean, efficient, well-documented code
+4. **Explanation** - Explain how the solution works and why
+5. **Testing** - Suggest test cases and edge cases to consider
+6. **Optimization** - Highlight performance considerations and best practices
 
-Please provide your response in a structured format:
-- Use clear sections and headers
-- Include actionable items where applicable
-- Format data in tables or lists as appropriate
-- Ensure the output is machine-readable if needed"""
+Follow language conventions, use proper naming, include comments, and ensure robustness."""
 
-    @staticmethod
-    def apply_instruction_based(prompt: str, use_case: UseCase) -> str:
-        """Apply clear instruction-based pattern."""
+    def _apply_divergent(self, prompt: str, config: FrameworkConfig, role: str) -> str:
+        """Apply creative ideation framework."""
+        return f"""You are a {role}. Let's explore creative possibilities.
 
-        return f"""Task: {prompt}
+**Creative Challenge:** {prompt}
 
-Please complete this task following these guidelines:
-- Be clear and direct
-- Focus on the specific requirements
-- Provide concrete, actionable output
-- Maintain high quality standards"""
+**Ideation Process:**
+1. **Expand** - Generate diverse ideas without judgment
+2. **Explore** - Push boundaries and think unconventionally
+3. **Combine** - Mix concepts in unexpected ways
+4. **Refine** - Develop the most promising directions
+5. **Present** - Showcase ideas with vivid descriptions
 
-    @staticmethod
-    def apply_brainstorm(prompt: str, use_case: UseCase) -> str:
-        """Apply brainstorming pattern."""
+Embrace creativity, think outside the box, provide multiple unique concepts (aim for 5-10), and make each idea distinct and compelling."""
 
-        return f"""Creative brainstorming session:
+    def _apply_narrative(self, prompt: str, config: FrameworkConfig, role: str) -> str:
+        """Apply writing and communication framework."""
+        return f"""You are a {role}. Craft clear, engaging communication.
 
-Topic: {prompt}
+**Writing Task:** {prompt}
 
-Please generate multiple diverse ideas:
-- Think outside the box
-- Explore different angles and perspectives
-- Prioritize creativity and originality
-- Provide at least 5-7 distinct concepts"""
+**Writing Framework:**
+1. **Purpose** - Define the goal and intended audience
+2. **Structure** - Organize content logically and effectively
+3. **Tone** - Match voice to context (professional, casual, persuasive, etc.)
+4. **Clarity** - Use precise language and clear expression
+5. **Engagement** - Make content compelling and reader-friendly
+6. **Polish** - Ensure grammatical correctness and flow
 
-    @staticmethod
-    def _get_examples_for_use_case(use_case: UseCase) -> str:
-        """Generate contextual examples based on use case."""
+Focus on effective communication that resonates with the intended audience."""
 
-        examples_map = {
-            "blog_article": """Example 1: \"Write about AI trends\" → \"Top 5 AI Trends Reshaping Business in 2024\"
-Example 2: \"Tech startups guide\" → \"The Complete Guide to Launching Your Tech Startup: From Idea to IPO\" """,
-            "social_media": """Example 1: Product launch → \"🚀 Excited to unveil our latest innovation! Game-changing features that'll transform how you work. Link in bio! #TechLaunch\"
-Example 2: Behind-the-scenes → \"Ever wondered what goes into creating our products? Here's a sneak peek at our design process 🎨✨\" """,
-            "code_generation": """Example 1: \"Sort array\" → def quick_sort(arr): ...
-Example 2: \"API endpoint\" → @app.route('/api/users', methods=['GET']) ...""",
-        }
+    def _apply_evaluative(self, prompt: str, config: FrameworkConfig, role: str) -> str:
+        """Apply optimization and review framework."""
+        return f"""You are a {role}. Provide comprehensive evaluation and improvement recommendations.
 
-        return examples_map.get(
-            use_case.subcategory,
-            "Example: Input → High-quality output following best practices",
-        )
+**Review Request:** {prompt}
+
+**Evaluation Framework:**
+1. **Assessment** - Analyze current state and identify strengths/weaknesses
+2. **Issues** - Pinpoint specific problems, inefficiencies, or areas for improvement
+3. **Root Causes** - Understand why issues exist
+4. **Recommendations** - Provide concrete, actionable improvement suggestions
+5. **Implementation** - Explain how to apply improvements
+6. **Expected Outcomes** - Describe benefits of proposed changes
+
+Be constructive, specific, and focus on practical improvements with clear impact."""
+
+    def _apply_default(self, prompt: str, config: FrameworkConfig, role: str) -> str:
+        """Apply default framework when no specific template matches."""
+        return f"""You are a {role}.
+
+**Task:** {prompt}
+
+Please provide a comprehensive, high-quality response that:
+- Addresses all aspects of the request
+- Demonstrates expertise and knowledge
+- Is well-structured and clear
+- Includes relevant examples or details
+- Considers edge cases and nuances
+
+Ensure your response is thorough, accurate, and valuable."""
 
 
 # ==================== PROMPT OPTIMIZER ====================
 
 
 class PromptOptimizer:
-    """Main optimization engine."""
+    """Main optimization engine with intelligent framework detection."""
 
     def __init__(self) -> None:
-        self.taxonomy = UseCaseTaxonomy()
+        self.detector = FrameworkDetector()
         self.applier = FrameworkApplier()
+        self.registry = FrameworkRegistry()
 
-    def optimize(self, user_input: str, explicit_use_case: str) -> OptimizedPrompt:
-        """Optimize user prompt based on the explicitly provided use case."""
+    def optimize(self, user_input: str, explicit_framework: Optional[str] = None) -> OptimizedPrompt:
+        """
+        Optimize user prompt with automatic or explicit framework selection.
+        
+        Args:
+            user_input: The original user prompt
+            explicit_framework: Optional framework name (e.g., "coding_technical")
+        
+        Returns:
+            OptimizedPrompt with all optimization details
+        """
 
-        if not explicit_use_case:
-            raise ValueError("explicit_use_case is required for optimization")
+        if not user_input or not user_input.strip():
+            raise ValueError("user_input cannot be empty")
 
-        use_case = self._find_use_case_by_name(explicit_use_case)
-        confidence = 1.0
+        # Determine framework
+        if explicit_framework:
+            framework, confidence, reasoning = self._get_explicit_framework(explicit_framework)
+        else:
+            framework, confidence, reasoning = self.detector.detect(user_input)
 
-        optimized = self._apply_frameworks(user_input, use_case)
-        optimized = self._add_quality_controls(optimized)
-        reasoning = self._generate_reasoning(user_input, use_case, confidence)
+        # Apply framework
+        optimized_prompt, suggested_role = self.applier.apply(user_input, framework)
+        
+        # Add quality controls
+        optimized_prompt = self._add_quality_controls(optimized_prompt)
+        
+        # Calculate quality score
+        quality_score = self._calculate_quality_score(optimized_prompt)
+        
+        # Get framework details
+        framework_config = self.registry.get_framework(framework)
 
         return OptimizedPrompt(
             original_input=user_input,
-            detected_use_case=use_case,
-            applied_frameworks=use_case.frameworks,
-            optimized_prompt=optimized,
+            detected_framework=framework,
+            framework_name=framework_config.name,
+            optimized_prompt=optimized_prompt,
             confidence_score=confidence,
             reasoning=reasoning,
+            suggested_role=suggested_role,
+            quality_score=quality_score,
         )
 
-    def _apply_frameworks(self, prompt: str, use_case: UseCase) -> str:
-        """Apply the primary framework for the use case."""
-
-        if not use_case.frameworks:
-            return prompt
-
-        primary_framework = use_case.frameworks[0]
-        framework_methods = {
-            Framework.CHAIN_OF_THOUGHT: self.applier.apply_chain_of_thought,
-            Framework.FEW_SHOT: self.applier.apply_few_shot,
-            Framework.MULTI_SHOT: self.applier.apply_few_shot,
-            Framework.ROLE_BASED: self.applier.apply_role_based,
-            Framework.FUNCTION_CALLING: self.applier.apply_function_calling,
-            Framework.INSTRUCTION_BASED: self.applier.apply_instruction_based,
-            Framework.BRAINSTORM: self.applier.apply_brainstorm,
-        }
-
-        method = framework_methods.get(primary_framework)
-        if method:
-            return method(prompt, use_case)
-
-        return prompt
+    def _get_explicit_framework(self, framework_name: str) -> Tuple[Framework, float, str]:
+        """Get framework from explicit name with validation."""
+        
+        framework_name = framework_name.lower().strip()
+        
+        # Try to match framework by value
+        for framework in Framework:
+            if framework.value == framework_name or framework.name.lower() == framework_name:
+                config = self.registry.get_framework(framework)
+                reasoning = f"Explicitly selected {config.name} framework as requested."
+                return framework, 1.0, reasoning
+        
+        # Fallback: try fuzzy matching
+        for framework in Framework:
+            if framework_name in framework.value or framework_name in framework.name.lower():
+                config = self.registry.get_framework(framework)
+                reasoning = f"Matched to {config.name} framework based on your selection."
+                return framework, 0.9, reasoning
+        
+        # Default fallback
+        default = Framework.REASONING_PROBLEM_SOLVING
+        config = self.registry.get_framework(default)
+        reasoning = f"Could not match '{framework_name}'. Defaulted to {config.name}."
+        return default, 0.5, reasoning
 
     @staticmethod
     def _add_quality_controls(prompt: str) -> str:
@@ -474,47 +682,51 @@ class PromptOptimizer:
 
         quality_suffix = """
 
-Quality requirements:
-- Ensure accuracy and relevance
-- Use clear, professional language
-- Provide complete, well-structured output
-- Double-check for errors before responding"""
+---
+**Quality Standards:**
+- Ensure accuracy and factual correctness
+- Use clear, appropriate language for the context
+- Provide complete, well-structured responses
+- Include relevant examples or evidence
+- Address edge cases and potential issues
+- Maintain consistency throughout"""
 
         return prompt + quality_suffix
 
     @staticmethod
-    def _generate_reasoning(original: str, use_case: UseCase, confidence: float) -> str:
-        """Generate explanation of optimization decisions."""
-
-        frameworks = ", ".join(f.value for f in use_case.frameworks)
-        return f"""Optimization Analysis:
+    def _calculate_quality_score(prompt: str) -> float:
+        """Calculate quality score for the optimized prompt."""
         
-1. Selected Use Case: {use_case.category} → {use_case.subcategory}
-    Confidence: {confidence:.1%}
-   
-2. Applied Frameworks: {frameworks}
-   
-3. Role Template: {use_case.role_template or 'General Assistant'}
-
-4. Optimization Strategy:
-   - Primary framework provides structure
-   - Role context adds expertise
-   - Quality controls ensure high output standards
-   
-5. Expected Improvement:
-   - More focused and relevant responses
-   - Better structured output
-   - Enhanced domain-specific knowledge application"""
-
-    def _find_use_case_by_name(self, name: str) -> UseCase:
-        """Find use case by category or subcategory name."""
-
-        all_cases = self.taxonomy.get_all_use_cases()
-        for case in all_cases:
-            if name.lower() in [case.category.lower(), case.subcategory.lower()]:
-                return case
-
-        return all_cases[0]
+        score = 0.0
+        
+        # Length adequacy (0-25 points)
+        length = len(prompt)
+        if length > 200:
+            score += 25
+        elif length > 100:
+            score += 15
+        elif length > 50:
+            score += 10
+        
+        # Structure (0-25 points)
+        if "\n" in prompt:
+            score += 10
+        if "**" in prompt or "##" in prompt:
+            score += 10
+        if any(marker in prompt for marker in ["1.", "2.", "-", "•"]):
+            score += 5
+        
+        # Specificity (0-25 points)
+        specific_words = ["specific", "exactly", "must", "should", "ensure", "provide", "include"]
+        matches = sum(1 for word in specific_words if word.lower() in prompt.lower())
+        score += min(matches * 5, 25)
+        
+        # Instructions (0-25 points)
+        instruction_markers = ["please", "ensure", "focus on", "consider", "remember"]
+        matches = sum(1 for marker in instruction_markers if marker.lower() in prompt.lower())
+        score += min(matches * 5, 25)
+        
+        return min(score / 100, 1.0)
 
 
 # ==================== EVALUATION & SIMILARITY ====================
@@ -613,122 +825,182 @@ class PromptOptimizationSystem:
     def __init__(self) -> None:
         self.optimizer = PromptOptimizer()
         self.evaluator = PromptEvaluator()
+        self.registry = FrameworkRegistry()
 
-    def process(self, user_input: str, explicit_use_case: Optional[str] = None) -> Dict:
-        """Process user input and return comprehensive optimization results."""
+    def process(self, user_input: str, explicit_framework: Optional[str] = None) -> Dict:
+        """
+        Process user input and return comprehensive optimization results.
+        
+        Args:
+            user_input: The original user prompt
+            explicit_framework: Optional framework name (e.g., "coding_technical", "creative_ideation")
+        
+        Returns:
+            Dictionary with optimization results and quality metrics
+        """
 
-        if not explicit_use_case:
-            raise ValueError("explicit_use_case is required")
-
-        result = self.optimizer.optimize(user_input, explicit_use_case)
+        result = self.optimizer.optimize(user_input, explicit_framework)
         original_quality = self.evaluator.evaluate_quality(user_input)
         optimized_quality = self.evaluator.evaluate_quality(result.optimized_prompt)
         improvement = optimized_quality["overall"] - original_quality["overall"]
 
+        framework_config = self.registry.get_framework(result.detected_framework)
+
         return {
             "original_input": result.original_input,
             "optimized_prompt": result.optimized_prompt,
-            "use_case": {
-                "category": result.detected_use_case.category,
-                "subcategory": result.detected_use_case.subcategory,
-                "description": result.detected_use_case.description,
-                "role": result.detected_use_case.role_template,
+            "framework": {
+                "id": result.detected_framework.value,
+                "name": result.framework_name,
+                "description": framework_config.description,
+                "role": result.suggested_role,
             },
-            "frameworks": [f.value for f in result.applied_frameworks],
             "confidence": result.confidence_score,
             "reasoning": result.reasoning,
             "quality_metrics": {
                 "original": original_quality,
                 "optimized": optimized_quality,
                 "improvement": improvement,
+                "overall_score": result.quality_score,
             },
         }
 
-    def list_available_use_cases(self) -> List[Dict]:
-        """List all available use cases."""
+    def list_available_frameworks(self) -> List[Dict]:
+        """List all available frameworks with details."""
 
-        taxonomy = UseCaseTaxonomy()
-        cases = []
+        frameworks = []
+        for framework_config in self.registry.get_all_frameworks():
+            frameworks.append({
+                "id": framework_config.framework.value,
+                "name": framework_config.name,
+                "description": framework_config.description,
+                "ideal_for": framework_config.ideal_for,
+                "example_inputs": framework_config.example_inputs,
+                "role_personas": framework_config.role_personas,
+            })
 
-        for category, use_case_list in taxonomy.use_cases.items():
-            for use_case in use_case_list:
-                cases.append(
-                    {
-                        "category": use_case.category,
-                        "subcategory": use_case.subcategory,
-                        "description": use_case.description,
-                        "frameworks": [f.value for f in use_case.frameworks],
-                        "role": use_case.role_template,
-                    }
-                )
+        return frameworks
 
-        return cases
+    def get_framework_by_id(self, framework_id: str) -> Optional[Dict]:
+        """Get detailed information about a specific framework."""
+
+        try:
+            framework = Framework(framework_id)
+            config = self.registry.get_framework(framework)
+            
+            return {
+                "id": config.framework.value,
+                "name": config.name,
+                "description": config.description,
+                "ideal_for": config.ideal_for,
+                "trigger_keywords": list(config.trigger_keywords)[:20],  # Limit for readability
+                "example_inputs": config.example_inputs,
+                "role_personas": config.role_personas,
+            }
+        except (ValueError, KeyError):
+            return None
 
 
 def main() -> None:
-    """Example usage of the system requiring explicit use cases."""
+    """Example usage of the new streamlined 7-framework system."""
 
     system = PromptOptimizationSystem()
 
     print("=" * 80)
-    print("EXAMPLE 1: Blog Writing (Explicit)")
+    print("🚀 CONTEXT-AWARE PROMPT OPTIMIZATION SYSTEM v2.0")
+    print("=" * 80)
+    print("\n✨ New Streamlined 7-Framework Architecture\n")
+
+    # Example 1: Auto-detection - Reasoning
+    print("\n" + "=" * 80)
+    print("EXAMPLE 1: Auto-Detection - Reasoning & Problem Solving")
     print("=" * 80)
 
-    user_input1 = "Write a blog post about the future of AI"
-    result1 = system.process(user_input1, explicit_use_case="blog_article")
+    user_input1 = "Should I invest in stocks or real estate right now?"
+    result1 = system.process(user_input1)
 
-    print(f"\n📝 Original Input:\n{result1['original_input']}\n")
-    print(f"🎯 Use Case: {result1['use_case']['subcategory']}")
-    print(f"   Category: {result1['use_case']['category']}")
-    print(f"   Confidence: {result1['confidence']:.1%}\n")
-    print(f"⚙️  Applied Frameworks: {', '.join(result1['frameworks'])}\n")
-    print(f"✨ Optimized Prompt:\n{result1['optimized_prompt']}\n")
-    print(f"📊 Quality Improvement: {result1['quality_metrics']['improvement']:+.2f}")
-    print(
-        f"   Original Score: {result1['quality_metrics']['original']['overall']:.2f}"
-    )
-    print(
-        f"   Optimized Score: {result1['quality_metrics']['optimized']['overall']:.2f}\n"
-    )
+    print(f"\n📝 Original Input: {result1['original_input']}")
+    print(f"\n🎯 Detected Framework: {result1['framework']['name']}")
+    print(f"   Confidence: {result1['confidence']:.1%}")
+    print(f"   Role: {result1['framework']['role']}")
+    print(f"\n💡 Reasoning: {result1['reasoning']}")
+    print(f"\n✨ Optimized Prompt:\n{'-' * 80}\n{result1['optimized_prompt']}\n{'-' * 80}")
+    print(f"\n📊 Quality Metrics:")
+    print(f"   Improvement: {result1['quality_metrics']['improvement']:+.2f}")
+    print(f"   Overall Score: {result1['quality_metrics']['overall_score']:.2f}")
 
-    print("\n" + "=" * 80)
-    print("EXAMPLE 2: Code Generation")
+    # Example 2: Auto-detection - Coding
+    print("\n\n" + "=" * 80)
+    print("EXAMPLE 2: Auto-Detection - Coding & Technical")
     print("=" * 80)
 
-    user_input2 = "Create a function to sort a list of numbers"
-    result2 = system.process(user_input2, explicit_use_case="code_generation")
+    user_input2 = "Write a Python function to find all prime numbers up to n"
+    result2 = system.process(user_input2)
 
-    print(f"\n📝 Original Input:\n{user_input2}\n")
-    print(f"🎯 Use Case: {result2['use_case']['subcategory']}")
-    print(f"⚙️  Applied Frameworks: {', '.join(result2['frameworks'])}\n")
-    print(f"✨ Optimized Prompt:\n{result2['optimized_prompt']}\n")
+    print(f"\n📝 Original Input: {result2['original_input']}")
+    print(f"\n🎯 Detected Framework: {result2['framework']['name']}")
+    print(f"   Confidence: {result2['confidence']:.1%}")
+    print(f"\n✨ Optimized Prompt (First 400 chars):\n{'-' * 80}\n{result2['optimized_prompt'][:400]}...\n{'-' * 80}")
 
-    print("\n" + "=" * 80)
-    print("EXAMPLE 3: Business Plan")
+    # Example 3: Explicit framework selection - Creative
+    print("\n\n" + "=" * 80)
+    print("EXAMPLE 3: Explicit Framework - Creative & Ideation")
     print("=" * 80)
 
-    user_input3 = "I need help planning my startup"
-    result3 = system.process(user_input3, explicit_use_case="business_plan")
+    user_input3 = "I need ideas for a marketing campaign"
+    result3 = system.process(user_input3, explicit_framework="creative_ideation")
 
-    print(f"\n📝 Original Input:\n{user_input3}\n")
-    print(f"🎯 Use Case: {result3['use_case']['subcategory']}")
-    print(f"👔 Role: {result3['use_case']['role']}\n")
-    print(f"✨ Optimized Prompt:\n{result3['optimized_prompt']}\n")
+    print(f"\n📝 Original Input: {result3['original_input']}")
+    print(f"\n🎯 Selected Framework: {result3['framework']['name']}")
+    print(f"   Confidence: {result3['confidence']:.1%}")
+    print(f"   Role: {result3['framework']['role']}")
+    print(f"\n✨ Optimized Prompt (First 400 chars):\n{'-' * 80}\n{result3['optimized_prompt'][:400]}...\n{'-' * 80}")
 
-    print("\n" + "=" * 80)
-    print("AVAILABLE USE CASES")
+    # Example 4: Writing framework
+    print("\n\n" + "=" * 80)
+    print("EXAMPLE 4: Auto-Detection - Writing & Communication")
+    print("=" * 80)
+
+    user_input4 = "Draft an email to my team about the new project deadline"
+    result4 = system.process(user_input4)
+
+    print(f"\n📝 Original Input: {result4['original_input']}")
+    print(f"\n🎯 Detected Framework: {result4['framework']['name']}")
+    print(f"   Confidence: {result4['confidence']:.1%}")
+
+    # List all available frameworks
+    print("\n\n" + "=" * 80)
+    print("📚 AVAILABLE FRAMEWORKS")
     print("=" * 80 + "\n")
 
-    cases = system.list_available_use_cases()
-    current_category = None
+    frameworks = system.list_available_frameworks()
+    
+    for i, fw in enumerate(frameworks, 1):
+        print(f"{i}. {fw['name']}")
+        print(f"   ID: {fw['id']}")
+        print(f"   Description: {fw['description']}")
+        print(f"   Ideal for:")
+        for ideal in fw['ideal_for'][:3]:  # Show first 3
+            print(f"      - {ideal}")
+        print(f"   Example: \"{fw['example_inputs'][0]}\"")
+        print()
 
-    for case in cases[:10]:
-        if case["category"] != current_category:
-            current_category = case["category"]
-            print(f"\n📂 {current_category.upper().replace('_', ' ')}")
+    # Show detection capabilities
+    print("\n" + "=" * 80)
+    print("🔍 INTELLIGENT AUTO-DETECTION EXAMPLES")
+    print("=" * 80 + "\n")
 
-        print(f"  • {case['subcategory']}: {case['description']}")
-        print(f"    Frameworks: {', '.join(case['frameworks'])}")
+    test_inputs = [
+        "How do I learn machine learning from scratch?",
+        "Improve this code snippet for me",
+        "Research the benefits of meditation",
+        "Brainstorm startup ideas in fintech",
+    ]
+
+    for test_input in test_inputs:
+        result = system.process(test_input)
+        print(f"Input: \"{test_input}\"")
+        print(f"→ Detected: {result['framework']['name']} ({result['confidence']:.0%} confidence)\n")
 
 
 if __name__ == "__main__":  # pragma: no cover - manual execution helper
