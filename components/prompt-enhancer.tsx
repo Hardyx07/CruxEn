@@ -52,44 +52,24 @@ export default function PromptEnhancer() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-16 relative z-10">
       {/* Hero Section with Modern Typography */}
-      <div className="mb-20 text-center max-w-4xl mx-auto space-y-6">
-        <div className="mb-8 inline-flex items-center gap-3 px-5 py-2.5 bg-linear-to-r from-accent/15 via-accent/10 to-transparent border border-accent/40 rounded-full backdrop-blur-xl shadow-lg shadow-accent/10 hover:shadow-accent/20 transition-all duration-500 hover:scale-105 cursor-default group">
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-accent"></span>
-          </span>
-          <span className="text-sm font-semibold text-accent tracking-wide uppercase">AI-Powered Enhancement Engine</span>
-          <span className="text-accent/60 group-hover:text-accent transition-colors">✨</span>
+      <div className="mb-20 text-center max-w-5xl mx-auto space-y-8">
+        <div className="mb-4">
+          <span className="text-xs font-semibold text-muted-foreground tracking-[0.3em] uppercase">Our Commitment</span>
         </div>
-        
-        <h1 className="text-6xl md:text-7xl lg:text-8xl font-black mb-6 text-transparent bg-clip-text bg-linear-to-br from-foreground via-foreground/90 to-foreground/70 tracking-tight leading-tight animate-text-shimmer">
-          Refine Your Prompts
-        </h1>
-        
-        <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed font-light max-w-3xl mx-auto">
-          Transform raw ideas into <span className="text-accent font-semibold">precise</span>, <span className="text-accent font-semibold">context-aware</span> prompts tailored to your specific needs
-        </p>
 
-        {/* Stats bar */}
-        <div className="flex flex-wrap justify-center gap-6 mt-10 pt-8 border-t border-border/30">
-          {[
-            { value: "10+", label: "Frameworks" },
-            { value: "50+", label: "Use Cases" },
-            { value: "<2s", label: "Response Time" },
-          ].map((stat, i) => (
-            <div key={i} className="text-center group cursor-default">
-              <div className="text-3xl font-bold text-accent group-hover:scale-110 transition-transform">{stat.value}</div>
-              <div className="text-sm text-muted-foreground mt-1">{stat.label}</div>
-            </div>
-          ))}
-        </div>
+        <h1 className="text-6xl md:text-7xl lg:text-[8rem] font-light mb-8 text-foreground tracking-tight leading-[0.95] font-serif">
+          We're just making Good Prompts like it's 2025
+        </h1>
+
+        <p className="text-lg md:text-xl text-muted-foreground/80 leading-relaxed font-light max-w-2xl mx-auto mt-12">
+          Transform raw ideas into precise, context-aware prompts tailored to your specific needs
+        </p>
       </div>
 
       <div className="w-full max-w-4xl space-y-8">
         {/* Framework Selector Card */}
-        <div className="relative group">
-          <div className="absolute -inset-0.5 bg-linear-to-r from-accent/50 via-primary/30 to-accent/50 rounded-2xl opacity-20 group-hover:opacity-40 blur transition-all duration-500"></div>
-          <div className="relative bg-card/50 backdrop-blur-2xl border border-border/50 rounded-2xl p-6 shadow-2xl hover:shadow-accent/10 transition-all duration-500">
+        <div className="relative z-50">
+          <div className="relative bg-card/30 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-2xl">
             <FrameworkSelector
               selectedUseCase={selectedUseCase}
               onUseCaseChange={setSelectedUseCase}
@@ -98,23 +78,17 @@ export default function PromptEnhancer() {
         </div>
 
         {/* Main Prompt Box with Enhanced Glassmorphism */}
-        <div ref={promptBoxRef} className="relative group">
-          {showTransform && <MagicTransformEffect />}
-          
-          {/* Animated gradient border */}
-          <div className="absolute -inset-1 bg-linear-to-r from-accent via-primary to-accent rounded-3xl opacity-20 group-hover:opacity-40 blur-xl transition-all duration-700 animate-gradient-shift"></div>
-          
-          <Card className="relative border-2 border-accent/30 bg-linear-to-br from-card/60 via-card/50 to-card/40 backdrop-blur-3xl hover:border-accent/60 transition-all duration-500 shadow-2xl hover:shadow-accent/20 rounded-3xl overflow-hidden">
+        <div ref={promptBoxRef} className="relative z-40">
+          <Card className="relative border-2 border-accent/30 bg-linear-to-br from-card/40 via-card/30 to-card/20 backdrop-blur-2xl shadow-2xl rounded-3xl overflow-hidden">
             {/* Glass reflection effect */}
             <div className="absolute inset-0 bg-linear-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
-            
+
             <div className="relative p-8 md:p-12">
               {enhancedPrompt ? (
                 <div className="space-y-8 fade-in">
                   {/* Result Header with Icon */}
                   <div className="flex items-center gap-3 mb-6 pb-6 border-b border-accent/20">
                     <div className="relative">
-                      <div className="absolute inset-0 bg-accent/30 rounded-full blur-lg animate-pulse"></div>
                       <div className="relative w-10 h-10 rounded-full bg-linear-to-br from-accent via-accent/80 to-accent/60 flex items-center justify-center shadow-lg shadow-accent/30">
                         <svg className="w-5 h-5 text-accent-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
@@ -126,7 +100,7 @@ export default function PromptEnhancer() {
                       <div className="text-xs text-muted-foreground">Optimized & Ready to Use</div>
                     </div>
                   </div>
-                  
+
                   {/* Enhanced Prompt Display */}
                   <div className="relative">
                     <div className="absolute -left-4 top-0 bottom-0 w-1 bg-linear-to-b from-accent via-accent/60 to-transparent rounded-full"></div>
@@ -134,17 +108,17 @@ export default function PromptEnhancer() {
                       <ReactMarkdown>{enhancedPrompt}</ReactMarkdown>
                     </div>
                   </div>
-                  
+
                   {/* Action Buttons */}
                   <div className="flex gap-3 pt-4">
                     <Button
                       onClick={() => {
                         navigator.clipboard.writeText(enhancedPrompt)
                       }}
-                      className="flex-1 bg-secondary/80 hover:bg-secondary text-secondary-foreground font-semibold py-4 rounded-xl transition-all duration-300 hover:shadow-lg group"
+                      className="flex-1 bg-secondary/80 hover:bg-secondary text-secondary-foreground font-semibold py-4 rounded-xl"
                     >
                       <span className="flex items-center justify-center gap-2">
-                        <svg className="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                         Copy
@@ -155,10 +129,10 @@ export default function PromptEnhancer() {
                         setEnhancedPrompt("")
                         setRawPrompt("")
                       }}
-                      className="flex-1 bg-linear-to-r from-accent via-accent/90 to-accent/80 hover:from-accent/90 hover:via-accent hover:to-accent text-accent-foreground font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-accent/30 hover:scale-[1.02] group"
+                      className="flex-1 bg-linear-to-r from-accent via-accent/90 to-accent/80 text-accent-foreground font-bold py-4 rounded-xl shadow-lg"
                     >
                       <span className="flex items-center justify-center gap-2">
-                        <span className="text-lg group-hover:rotate-180 transition-transform duration-500">✨</span>
+                        <span className="text-lg">✨</span>
                         Create Another
                       </span>
                     </Button>
@@ -223,7 +197,7 @@ export default function PromptEnhancer() {
             >
               {/* Gradient glow on hover */}
               <div className="absolute -inset-0.5 bg-linear-to-r from-accent/0 via-accent/50 to-accent/0 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500"></div>
-              
+
               <div className="relative px-6 py-5 rounded-2xl bg-card/40 backdrop-blur-xl border border-border/40 hover:border-accent/50 hover:bg-card/60 transition-all duration-500 text-center h-full flex flex-col justify-center gap-2 group-hover:scale-105 group-hover:shadow-lg">
                 <div className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
                 <div className="text-base font-bold text-foreground group-hover:text-accent transition-colors">{item.label}</div>

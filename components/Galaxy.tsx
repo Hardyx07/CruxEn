@@ -192,18 +192,18 @@ interface GalaxyProps {
 export default function Galaxy({
   focal = [0.5, 0.5],
   rotation = [1.0, 0.0],
-  starSpeed = 0.5,
-  density = 1,
-  hueShift = 140,
+  starSpeed = 0.2, // Slower, more majestic movement
+  density = 1.5, // More stars for a richer background
+  hueShift = 200, // Shift towards purples and blues
   disableAnimation = false,
-  speed = 1.0,
+  speed = 0.5, // Slower overall animation
   mouseInteraction = true,
-  glowIntensity = 0.3,
-  saturation = 0.0,
+  glowIntensity = 0.8, // Brighter glow
+  saturation = 0.8, // More vibrant colors
   mouseRepulsion = true,
-  repulsionStrength = 2,
-  twinkleIntensity = 0.3,
-  rotationSpeed = 0.1,
+  repulsionStrength = 1.5,
+  twinkleIntensity = 0.5,
+  rotationSpeed = 0.05,
   autoCenterRepulsion = 0,
   transparent = true,
   ...rest

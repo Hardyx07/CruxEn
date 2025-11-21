@@ -27,18 +27,13 @@ export default function PromptInput({ value, onChange, placeholder = "Enter your
         {isFocused || value ? 'Your Prompt' : placeholder}
       </label>
 
-      {/* Glow effect on focus */}
-      {isFocused && (
-        <div className="absolute -inset-0.5 bg-linear-to-r from-accent/30 via-primary/20 to-accent/30 rounded-2xl blur opacity-50 animate-pulse"></div>
-      )}
-
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         maxLength={maxLength}
-        className="relative w-full px-6 pt-6 pb-4 bg-background/60 backdrop-blur-xl border-2 border-border/60 rounded-2xl text-foreground text-lg placeholder:text-transparent focus:outline-none focus:border-accent/60 focus:bg-background/80 resize-none transition-all duration-500 focus:shadow-lg focus:shadow-accent/10 leading-relaxed"
+        className="relative w-full px-6 pt-6 pb-4 bg-background/60 backdrop-blur-xl border-2 border-border/60 rounded-2xl text-foreground text-lg placeholder:text-transparent focus:outline-none focus:border-accent/60 focus:bg-background/80 resize-none leading-relaxed"
         rows={8}
       />
 
