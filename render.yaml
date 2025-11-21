@@ -4,9 +4,9 @@ services:
     env: python
     plan: free
     branch: main
-    root: flask_app
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT"
+    root: .
+    buildCommand: "pip install -r flask_app/requirements.txt"
+    startCommand: "cd flask_app && gunicorn app:app --bind 0.0.0.0:$PORT"
     envVars:
       - key: GROQ_API_KEY
         fromDeploySecret: GROQ_API_KEY
