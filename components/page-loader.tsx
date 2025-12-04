@@ -10,7 +10,7 @@ export default function PageLoader({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 2300) 
+    }, 300) 
 
     return () => clearTimeout(timer)
   }, [])

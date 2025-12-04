@@ -6,9 +6,9 @@ import { Card } from "@/components/ui/card"
 import { LiquidButton } from "@/components/animate-ui/components/buttons/liquid"
 import FrameworkSelector from "./framework-selector"
 import PromptInput from "./prompt-input"
-import MagicTransformEffect from "./magic-transform-effect"
 import { optimizePrompt } from "@/lib/api-client"
 import ReactMarkdown from 'react-markdown'
+import SpotlightCard from "./SpotlightCard"
 
 export default function PromptEnhancer() {
   const [rawPrompt, setRawPrompt] = useState("")
@@ -54,11 +54,11 @@ export default function PromptEnhancer() {
       {/* Hero Section with Modern Typography */}
       <div className="mb-20 text-center max-w-5xl mx-auto space-y-8">
         <div className="mb-4">
-          <span className="text-xs font-semibold text-muted-foreground tracking-[0.3em] uppercase">Our Commitment</span>
+          <span className="text-xs font-semibold text-muted-foreground tracking-[0.3em] uppercase">For people who think faster than they type</span>
         </div>
 
         <h1 className="text-6xl md:text-7xl lg:text-[8rem] font-light mb-8 text-foreground tracking-tight leading-[0.95] font-serif">
-          We're just making Good Prompts like it's 2025
+         You Know the Idea CruxEn Finds the Words
         </h1>
 
         <p className="text-lg md:text-xl text-muted-foreground/80 leading-relaxed font-light max-w-2xl mx-auto mt-12">
@@ -182,29 +182,62 @@ export default function PromptEnhancer() {
           </Card>
         </div>
 
-        {/* Feature Cards with Modern Design */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16">
-          {[
-            { label: "Precise", desc: "Contextually accurate", icon: "🎯" },
-            { label: "Fast", desc: "Real-time processing", icon: "⚡" },
-            { label: "Flexible", desc: "Multiple frameworks", icon: "🔄" },
-            { label: "Smart", desc: "AI-powered", icon: "🧠" },
-          ].map((item, index) => (
-            <div
-              key={item.label}
-              className="group relative overflow-hidden"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              {/* Gradient glow on hover */}
-              <div className="absolute -inset-0.5 bg-linear-to-r from-accent/0 via-accent/50 to-accent/0 rounded-2xl opacity-0 group-hover:opacity-100 blur transition-all duration-500"></div>
-
-              <div className="relative px-6 py-5 rounded-2xl bg-card/40 backdrop-blur-xl border border-border/40 hover:border-accent/50 hover:bg-card/60 transition-all duration-500 text-center h-full flex flex-col justify-center gap-2 group-hover:scale-105 group-hover:shadow-lg">
-                <div className="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
-                <div className="text-base font-bold text-foreground group-hover:text-accent transition-colors">{item.label}</div>
-                <div className="text-xs text-muted-foreground leading-relaxed">{item.desc}</div>
-              </div>
-            </div>
-          ))}
+        {/* Why Creators Choose Cruxen Section */}
+        <div className="mt-20 mb-12 text-center">
+          <h2 className="text-2xl md:text-3xl font-light text-foreground mb-16 tracking-wide">
+            Why Creators Use Cruxen Instead of Writing Prompts Alone
+          </h2>
+          
+          {/* Premium Feature Cards with SpotlightCard */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              { 
+                title: "Adaptive AI Engine", 
+                desc: "Learns and adapts to your unique style and requirements", 
+                icon: (
+                  <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                )
+              },
+              { 
+                title: "Human-Style Understanding", 
+                desc: "Interprets context and nuance like a creative partner", 
+                icon: (
+                  <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                )
+              },
+              { 
+                title: "Zero Overthinking Required", 
+                desc: "Just share your idea - we handle the complexity", 
+                icon: (
+                  <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                )
+              }
+            ].map((feature, index) => (
+              <SpotlightCard 
+                key={feature.title}
+                className="group cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+                spotlightColor="rgba(139, 92, 246, 0.15)"
+              >
+                <div className="text-center space-y-4 p-4">
+                  <div className="flex justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed group-hover:text-muted-foreground/90 transition-colors duration-300">
+                    {feature.desc}
+                  </p>
+                </div>
+              </SpotlightCard>
+            ))}
+          </div>
         </div>
 
         {/* Bottom CTA Section */}

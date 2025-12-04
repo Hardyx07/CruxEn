@@ -2,7 +2,7 @@
  * API client for backend communication
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://cruxen-backend.vercel.app"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000"
 
 export interface UseCase {
   category: string
