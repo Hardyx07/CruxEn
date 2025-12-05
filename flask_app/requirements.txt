@@ -1,5 +1,41 @@
-Flask==3.0.0
-python-dotenv==1.0.1
-requests==2.32.3
-flask-cors==4.0.0
-gunicorn==21.2.0
+# =============================================================================
+# CruxEn Flask API - Python Dependencies
+# =============================================================================
+# Install with: pip install -r requirements.txt
+# 
+# For development, also install dev dependencies:
+#   pip install pytest pytest-cov
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Core Flask Framework
+# -----------------------------------------------------------------------------
+Flask==3.0.0                # Web framework
+python-dotenv==1.0.1        # Load environment variables from .env file
+requests==2.32.3            # HTTP client for external API calls (Groq)
+
+# -----------------------------------------------------------------------------
+# Security & CORS
+# -----------------------------------------------------------------------------
+flask-cors==4.0.0           # Cross-Origin Resource Sharing support
+flask-limiter==3.5.0        # Rate limiting to prevent abuse
+
+# -----------------------------------------------------------------------------
+# Production Server
+# -----------------------------------------------------------------------------
+gunicorn==21.2.0            # WSGI HTTP server for production deployment
+                            # Usage: gunicorn app:app --bind 0.0.0.0:5000
+
+# -----------------------------------------------------------------------------
+# Testing (Development Only)
+# -----------------------------------------------------------------------------
+pytest==7.4.3               # Testing framework
+pytest-cov==4.1.0           # Code coverage plugin for pytest
+                            # Run tests: pytest tests/ -v
+                            # With coverage: pytest tests/ --cov=. --cov-report=html
+
+# -----------------------------------------------------------------------------
+# Optional: Async Support (uncomment if needed)
+# -----------------------------------------------------------------------------
+# gevent==23.9.1            # Async workers for gunicorn
+                            # Usage: gunicorn app:app -k gevent --workers 4
