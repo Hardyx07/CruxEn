@@ -112,8 +112,11 @@ def create_app(config=None):
     # This prevents unauthorized domains from making API requests
     CORS(
         app,
-        resources={r"/*": {"origins": config.ALLOWED_ORIGINS}},
-        supports_credentials=True,  # Allow cookies/auth headers
+        origins=config.ALLOWED_ORIGINS,
+        methods=["GET", "POST", "OPTIONS"],
+        allow_headers=["Content-Type", "Authorization", "X-Request-ID"],
+        expose_headers=["X-Request-ID", "X-Response-Time"],
+        supports_credentials=True,
     )
 
     # -------------------------------------------------------------------------

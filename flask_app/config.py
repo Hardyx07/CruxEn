@@ -162,7 +162,7 @@ class ProductionConfig(Config):
         origin.strip()
         for origin in os.getenv(
             "ALLOWED_ORIGINS",
-            "https://cruxen.vercel.app"  # Production frontend URL
+            "https://crux-en.vercel.app"  # Production frontend URL
         ).split(",")
         if origin.strip()
     ]
