@@ -70,7 +70,7 @@ class Config:
         origin.strip()
         for origin in os.getenv(
             "ALLOWED_ORIGINS",
-            "http://localhost:3000,https://cruxen.vercel.app"  # Default origins
+            "http://localhost:3000,https://crux-en.vercel.app"  # Default origins
         ).split(",")
         if origin.strip()  # Filter out empty strings
     ]
