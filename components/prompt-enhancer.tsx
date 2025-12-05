@@ -2,8 +2,9 @@
 
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
+import { Button as StatefulButton } from "@/components/ui/stateful-button"
+import { CopyButton } from "@/components/animate-ui/components/buttons/copy"
 import { Card } from "@/components/ui/card"
-import { LiquidButton } from "@/components/animate-ui/components/buttons/liquid"
 import FrameworkSelector from "./framework-selector"
 import PromptInput from "./prompt-input"
 import { optimizePrompt } from "@/lib/api-client"
@@ -110,29 +111,22 @@ export default function PromptEnhancer() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-3 pt-4">
-                    <Button
-                      onClick={() => {
-                        navigator.clipboard.writeText(enhancedPrompt)
-                      }}
-                      className="flex-1 bg-secondary/80 hover:bg-secondary text-secondary-foreground font-semibold py-4 rounded-xl"
-                    >
-                      <span className="flex items-center justify-center gap-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        Copy
-                      </span>
-                    </Button>
+                  <div className="flex gap-4 pt-4 items-stretch h-14">
+                    <CopyButton
+                      content={enhancedPrompt}
+                      variant="outline"
+                      size="lg"
+                      className="w-14 min-w-14 border-2 border-accent/50 bg-card/50 hover:bg-accent/20 hover:border-accent text-accent rounded-xl backdrop-blur-sm transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-accent/20 [&_svg]:size-5 h-full"
+                    />
                     <Button
                       onClick={() => {
                         setEnhancedPrompt("")
                         setRawPrompt("")
                       }}
-                      className="flex-1 bg-linear-to-r from-accent via-accent/90 to-accent/80 text-accent-foreground font-bold py-4 rounded-xl shadow-lg"
+                      className="flex-1 bg-linear-to-r from-accent to-accent/85 text-accent-foreground font-semibold rounded-xl shadow-lg shadow-accent/25 hover:shadow-xl hover:shadow-accent/35 transition-all duration-300 hover:brightness-110 h-full"
                     >
                       <span className="flex items-center justify-center gap-2">
-                        <span className="text-lg">✨</span>
+                        <span className="text-lg">🪄</span>
                         Create Another
                       </span>
                     </Button>
@@ -145,29 +139,17 @@ export default function PromptEnhancer() {
                     onChange={setRawPrompt}
                     placeholder="Share your raw idea or prompt here..."
                   />
-                  <LiquidButton
+                  <StatefulButton
                     onClick={handleEnhance}
                     disabled={!rawPrompt.trim() || !selectedUseCase || isLoading}
-                    className="w-full mt-8"
-                    variant="default"
-                    size="lg"
+                    className="w-full mt-8 bg-linear-to-r from-accent via-accent/90 to-accent/80 hover:ring-accent text-accent-foreground font-bold py-4 rounded-xl"
                   >
-                    {isLoading ? (
-                      <span className="flex items-center justify-center gap-3">
-                        <span className="relative inline-block w-5 h-5">
-                          <span className="absolute inset-0 border-3 border-current/30 rounded-full"></span>
-                          <span className="absolute inset-0 border-3 border-current border-t-transparent rounded-full animate-spin"></span>
-                        </span>
-                        <span className="font-bold">Enhancing with AI Magic...</span>
-                      </span>
-                    ) : (
-                      <span className="flex items-center justify-center gap-2">
-                        <span className="text-xl">✨</span>
-                        <span className="font-bold">Enhance with Magic</span>
-                        <span className="text-xl">✨</span>
-                      </span>
-                    )}
-                  </LiquidButton>
+                    <span className="flex items-center justify-center gap-2">
+                      {/* <span className="text-xl">🌀</span> */}
+                      <span className="font-bold">Enhance </span>
+                      <span className="text-xl">🪄</span>
+                    </span>
+                  </StatefulButton>
                   {error && (
                     <div className="mt-6 p-4 bg-destructive/10 backdrop-blur-xl border border-destructive/30 rounded-xl text-sm text-destructive font-medium shadow-lg flex items-start gap-3">
                       <svg className="w-5 h-5 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
