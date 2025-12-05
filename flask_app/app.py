@@ -110,14 +110,7 @@ def create_app(config=None):
     # -------------------------------------------------------------------------
     # Restrict cross-origin requests to specific allowed domains
     # This prevents unauthorized domains from making API requests
-    CORS(
-        app,
-        origins=config.ALLOWED_ORIGINS,
-        methods=["GET", "POST", "OPTIONS"],
-        allow_headers=["Content-Type", "Authorization", "X-Request-ID"],
-        expose_headers=["X-Request-ID", "X-Response-Time"],
-        supports_credentials=True,
-    )
+    # Note: Manual CORS headers are added after middleware registration below
 
     # -------------------------------------------------------------------------
     # Rate Limiting
@@ -136,6 +129,20 @@ def create_app(config=None):
     # -------------------------------------------------------------------------
     # Add request logging with timing and unique request IDs
     RequestLoggingMiddleware(app)
+    
+    # -------------------------------------------------------------------------
+    # CORS Headers (registered AFTER other middleware to run LAST)
+    # -------------------------------------------------------------------------
+    @app.after_request
+    def add_cors_headers(response):
+        origin = request.headers.get("Origin")
+        if origin and origin in config.ALLOWED_ORIGINS:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, X-Request-ID"
+            response.headers["Access-Control-Expose-Headers"] = "X-Request-ID, X-Response-Time"
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response
 
     # -------------------------------------------------------------------------
     # Service Initialization

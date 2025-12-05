@@ -133,10 +133,12 @@ class DevelopmentConfig(Config):
     DEBUG = True  # Enable debug mode for development
     
     # Allow all common localhost variations for development
+    # Plus production URL for testing CORS locally
     ALLOWED_ORIGINS = [
         "http://localhost:3000",    # Next.js default
         "http://127.0.0.1:3000",    # Alternative localhost
-        "http://localhost:5000",     # Flask default
+        "http://localhost:5000",    # Flask default
+        "https://crux-en.vercel.app",  # Production frontend (for local testing)
     ]
 
 
