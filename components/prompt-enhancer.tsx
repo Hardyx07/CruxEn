@@ -9,7 +9,7 @@ import FrameworkSelector from "./framework-selector"
 import PromptInput from "./prompt-input"
 import { optimizePrompt } from "@/lib/api-client"
 import ReactMarkdown from 'react-markdown'
-import SpotlightCard from "./SpotlightCard"
+import SpotlightCard from "./ui/SpotlightCard"
 
 export default function PromptEnhancer() {
   const [rawPrompt, setRawPrompt] = useState("")

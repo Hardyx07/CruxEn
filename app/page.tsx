@@ -1,6 +1,6 @@
 "use client"
 import PromptEnhancer from "@/components/prompt-enhancer"
-import PageLoader from "@/components/page-loader"
+import PageLoader from "@/components/ui/page-loader"
 import { ShootingStars } from "@/components/ui/shooting-stars"
 import { StarsBackground } from "@/components/ui/stars-background"
 

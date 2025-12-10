@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react"
 import type { UseCase } from "@/lib/api-client"
 import { fetchUseCases } from "@/lib/api-client"
-import "./framework-selector.css"
+import "./styles/framework-selector.css"
 
 interface FrameworkSelectorProps {
   selectedUseCase: string | null
