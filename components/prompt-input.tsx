@@ -10,7 +10,7 @@ interface PromptInputProps {
 
 export default function PromptInput({ value, onChange, placeholder = "Enter your prompt..." }: PromptInputProps) {
   const [isFocused, setIsFocused] = useState(false)
-  const maxLength = 2000
+  const maxLength = 7000
   const charCount = value.length
   const charPercentage = (charCount / maxLength) * 100
 
