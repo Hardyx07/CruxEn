@@ -7,7 +7,7 @@
   overflow: hidden;
   --mouse-x: 50%;
   --mouse-y: 50%;
-  --spotlight-color: rgba(206, 182, 182, 0.829);
+  --spotlight-color: rgba(255, 255, 255, 0.25);
 }
 
 .card-spotlight::before {

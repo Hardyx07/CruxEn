@@ -484,7 +484,7 @@ def register_routes(app, config):
                     "framework": opt_result["framework"],
                     "confidence": opt_result["confidence"],
                     "reasoning": opt_result["reasoning"],
-                    "quality_metrics": opt_result["quality_metrics"],
+                    "generation_mode": opt_result.get("generation_mode", "unknown"),
                     "llm_model": llm_response.model,
                     "usage": llm_response.usage,  # Token usage stats
                 }
