@@ -18,17 +18,21 @@ export default function PromptEnhancer() {
   const [isLoading, setIsLoading] = useState(false)
   const [showTransform, setShowTransform] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [originalRawPrompt, setOriginalRawPrompt] = useState("")
   const promptBoxRef = useRef<HTMLDivElement>(null)
 
-  const handleEnhance = async () => {
-    if (!rawPrompt.trim() || !selectedUseCase) return
+  const handleEnhance = async (promptToEnhance?: string, useCase?: string) => {
+    const promptText = promptToEnhance ?? rawPrompt
+    const selectedFramework = useCase ?? selectedUseCase
+
+    if (!promptText.trim() || !selectedFramework) return
 
     setIsLoading(true)
     setShowTransform(true)
     setError(null)
 
     try {
-      const response = await optimizePrompt(rawPrompt, selectedUseCase)
+      const response = await optimizePrompt(promptText, selectedFramework)
 
       if (response.error) {
         throw new Error(response.error)
@@ -36,6 +40,7 @@ export default function PromptEnhancer() {
 
       setTimeout(() => {
         setEnhancedPrompt(response.optimized_prompt)
+        setOriginalRawPrompt(promptText)
         setRawPrompt("")
         setShowTransform(false)
         setIsLoading(false)
@@ -47,6 +52,12 @@ export default function PromptEnhancer() {
       )
       setShowTransform(false)
       setIsLoading(false)
+    }
+  }
+
+  const handleRetry = () => {
+    if (originalRawPrompt && selectedUseCase) {
+      handleEnhance(originalRawPrompt, selectedUseCase)
     }
   }
 
@@ -78,6 +89,60 @@ export default function PromptEnhancer() {
           </div>
         </div>
 
+        {/* Popular Frameworks Quick Select */}
+        <div className="space-y-4">
+          <div className="text-center">
+            <span className="text-xs font-semibold text-muted-foreground tracking-[0.2em] uppercase">
+              Popular Frameworks
+            </span>
+          </div>
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={() => setSelectedUseCase("coding_technical")}
+              className={`group relative px-8 py-4 rounded-xl backdrop-blur-xl border transition-all duration-300 ${
+                selectedUseCase === "coding_technical"
+                  ? "bg-accent/20 border-accent/50 shadow-lg shadow-accent/20"
+                  : "bg-card/30 border-border/50 hover:border-accent/30 hover:bg-card/40"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <svg className={`w-5 h-5 transition-colors duration-300 ${
+                  selectedUseCase === "coding_technical" ? "text-accent" : "text-muted-foreground group-hover:text-accent/70"
+                }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <span className={`font-medium transition-colors duration-300 ${
+                  selectedUseCase === "coding_technical" ? "text-accent" : "text-foreground group-hover:text-accent/70"
+                }`}>
+                  Coding
+                </span>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setSelectedUseCase("research_exploration")}
+              className={`group relative px-8 py-4 rounded-xl backdrop-blur-xl border transition-all duration-300 ${
+                selectedUseCase === "research_exploration"
+                  ? "bg-accent/20 border-accent/50 shadow-lg shadow-accent/20"
+                  : "bg-card/30 border-border/50 hover:border-accent/30 hover:bg-card/40"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <svg className={`w-5 h-5 transition-colors duration-300 ${
+                  selectedUseCase === "research_exploration" ? "text-accent" : "text-muted-foreground group-hover:text-accent/70"
+                }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className={`font-medium transition-colors duration-300 ${
+                  selectedUseCase === "research_exploration" ? "text-accent" : "text-foreground group-hover:text-accent/70"
+                }`}>
+                  Research
+                </span>
+              </div>
+            </button>
+          </div>
+        </div>
+
         {/* Main Prompt Box with Enhanced Glassmorphism */}
         <div ref={promptBoxRef} className="relative z-40">
           <Card className="relative border-2 border-accent/30 bg-linear-to-br from-card/40 via-card/30 to-card/20 backdrop-blur-2xl shadow-2xl rounded-3xl overflow-hidden">
@@ -87,19 +152,27 @@ export default function PromptEnhancer() {
             <div className="relative p-8 md:p-12">
               {enhancedPrompt ? (
                 <div className="space-y-8 fade-in">
-                  {/* Result Header with Icon */}
-                  <div className="flex items-center gap-3 mb-6 pb-6 border-b border-accent/20">
-                    <div className="relative">
-                      <div className="relative w-10 h-10 rounded-full bg-linear-to-br from-accent via-accent/80 to-accent/60 flex items-center justify-center shadow-lg shadow-accent/30">
-                        <svg className="w-5 h-5 text-accent-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                        </svg>
+                  {/* Result Header with Icon and Copy Button */}
+                  <div className="flex items-center justify-between gap-3 mb-6 pb-6 border-b border-accent/20">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div className="relative w-10 h-10 rounded-full bg-linear-to-br from-accent via-accent/80 to-accent/60 flex items-center justify-center shadow-lg shadow-accent/30">
+                          <svg className="w-5 h-5 text-accent-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-base font-bold text-accent uppercase tracking-wider">Enhanced Result</div>
+                        <div className="text-xs text-muted-foreground">Optimized & Ready to Use</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-base font-bold text-accent uppercase tracking-wider">Enhanced Result</div>
-                      <div className="text-xs text-muted-foreground">Optimized & Ready to Use</div>
-                    </div>
+                    <CopyButton
+                      content={enhancedPrompt}
+                      variant="outline"
+                      size="lg"
+                      className="w-14 min-w-14 border-2 border-accent/50 bg-card/50 hover:bg-accent/20 hover:border-accent text-accent rounded-xl backdrop-blur-sm transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-accent/20 [&_svg]:size-5 cursor-pointer"
+                    />
                   </div>
 
                   {/* Enhanced Prompt Display */}
@@ -112,18 +185,23 @@ export default function PromptEnhancer() {
 
                   {/* Action Buttons */}
                   <div className="flex gap-4 pt-4 items-stretch h-14">
-                    <CopyButton
-                      content={enhancedPrompt}
-                      variant="outline"
-                      size="lg"
-                      className="w-14 min-w-14 border-2 border-accent/50 bg-card/50 hover:bg-accent/20 hover:border-accent text-accent rounded-xl backdrop-blur-sm transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-accent/20 [&_svg]:size-5 h-full"
-                    />
+                    <Button
+                      onClick={handleRetry}
+                      disabled={isLoading}
+                      className="px- nded-xl backdrop cursor-pointer h-full"
+                    >
+                      <span className="flex items-center justify-center gap-2">
+                        
+                        Retry
+                      </span>
+                    </Button>
                     <Button
                       onClick={() => {
                         setEnhancedPrompt("")
                         setRawPrompt("")
+                        setOriginalRawPrompt("")
                       }}
-                      className="flex-1 bg-linear-to-r from-accent to-accent/85 text-accent-foreground font-semibold rounded-xl shadow-lg shadow-accent/25 hover:shadow-xl hover:shadow-accent/35 transition-all duration-300 hover:brightness-110 h-full"
+                      className="flex-1 bg-linear-to-r from-accent to-accent/85 text-accent-foreground font-semibold rounded-xl shadow-lg shadow-accent/25 hover:shadow-xl hover:shadow-accent/35 transition-all duration-300 hover:brightness-110 cursor-pointer h-full"
                     >
                       <span className="flex items-center justify-center gap-2">
                         <span className="text-lg">🪄</span>
@@ -140,9 +218,9 @@ export default function PromptEnhancer() {
                     placeholder="Share your raw idea or prompt here..."
                   />
                   <StatefulButton
-                    onClick={handleEnhance}
+                    onClick={() => handleEnhance()}
                     disabled={!rawPrompt.trim() || !selectedUseCase || isLoading}
-                    className="w-full mt-8 bg-linear-to-r from-accent via-accent/90 to-accent/80 hover:ring-accent text-accent-foreground font-bold py-4 rounded-xl"
+                    className="w-full mt-8 bg-linear-to-r from-accent via-accent/90 to-accent/80 hover:ring-accent text-accent-foreground font-bold py-4 rounded-xl cursor-pointer"
                   >
                     <span className="flex items-center justify-center gap-2">
                       {/* <span className="text-xl">🌀</span> */}
@@ -224,9 +302,17 @@ export default function PromptEnhancer() {
 
         {/* Bottom CTA Section */}
         <div className="mt-20 text-center">
-          <p className="text-sm text-muted-foreground">
-            Powered by advanced AI • Trusted by creative professionals
-          </p>
+          <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Powered by</span>
+            <a 
+              href="https://groq.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 group hover:text-accent transition-colors duration-300"
+            >
+              <span className="font-semibold">Groq</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
